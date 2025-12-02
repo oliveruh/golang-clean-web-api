@@ -40,3 +40,10 @@ otp:
   expireTime: 120
   digits: 6
   limiter: 100
+jwt:
+  secret: "your-256-bit-secret-key-for-jwt-token-generation"
+  accessExpireTime: 60  # minutes
+  refreshExpireTime: 10080  # minutes (7 days)
+rateLimiter:
+  enabled: true
+  requestsPerMin: 100

@@ -20,6 +20,7 @@ func InitServer(cfg *config.Config) {
 	r.Use(gin.Logger())
 	r.Use(gin.Recovery())
 	r.Use(middleware.Cors(cfg))
+	r.Use(middleware.RateLimiter(cfg))
 
 	RegisterRoutes(r, cfg)
 
@@ -33,16 +34,24 @@ func InitServer(cfg *config.Config) {
 
 func RegisterRoutes(r *gin.Engine, cfg *config.Config) {
 	api := r.Group("/api")
+
+	// Swagger documentation
+	router.Swagger(r, cfg)
+
 	v1 := api.Group("/v1")
 	{
-		// Health check
+		// Health check - public endpoint
 		health := v1.Group("/health")
 		router.Health(health)
 
-		// Basic CRUD endpoints
-		countries := v1.Group("/countries")
-		cities := v1.Group("/cities")
-		colors := v1.Group("/colors")
+		// Authentication endpoints - public
+		auth := v1.Group("/auth")
+		router.Auth(auth, cfg)
+
+		// Protected CRUD endpoints - require authentication
+		countries := v1.Group("/countries", middleware.Authentication(cfg))
+		cities := v1.Group("/cities", middleware.Authentication(cfg))
+		colors := v1.Group("/colors", middleware.Authentication(cfg))
 
 		router.Country(countries, cfg)
 		router.City(cities, cfg)

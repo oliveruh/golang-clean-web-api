@@ -65,18 +65,18 @@ type Company struct {
 }
 
 type CreateColor struct {
-	Name    string 
-	HexCode string 
+	Name    string
+	HexCode string
 }
 
 type UpdateColor struct {
-	Name    string  
-	HexCode string  
+	Name    string
+	HexCode string
 }
 
 type Color struct {
 	IdName
-	HexCode string 
+	HexCode string
 }
 
 type CreatePersianYear struct {

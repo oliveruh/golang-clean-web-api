@@ -2,10 +2,10 @@ package api
 
 import (
 	"encoding/json"
+	"golang-clean-web-api/config"
 	"net/http"
 	"net/http/httptest"
 	"testing"
-	"golang-clean-web-api/config"
 
 	"github.com/gin-gonic/gin"
 )
@@ -24,8 +24,8 @@ func TestHealthEndpoint(t *testing.T) {
 	// Register routes
 	RegisterRoutes(r, cfg)
 
-	// Create a test request
-	req, err := http.NewRequest("GET", "/api/v1/health", nil)
+	// Create a test request (note: health endpoint requires trailing slash)
+	req, err := http.NewRequest("GET", "/api/v1/health/", nil)
 	if err != nil {
 		t.Fatalf("Failed to create request: %v", err)
 	}
@@ -47,13 +47,17 @@ func TestHealthEndpoint(t *testing.T) {
 		t.Fatalf("Failed to parse response: %v", err)
 	}
 
-	// Check response fields
-	if status, ok := response["status"].(string); !ok || status != "ok" {
-		t.Errorf("Expected status 'ok', got '%v'", response["status"])
+	// Check response fields (BaseHttpResponse structure)
+	if success, ok := response["success"].(bool); !ok || !success {
+		t.Errorf("Expected success true, got '%v'", response["success"])
 	}
 
-	if message, ok := response["message"].(string); !ok || message != "Server is running" {
-		t.Errorf("Expected message 'Server is running', got '%v'", response["message"])
+	if result, ok := response["result"].(string); !ok || result != "Working!" {
+		t.Errorf("Expected result 'Working!', got '%v'", response["result"])
+	}
+
+	if resultCode, ok := response["resultCode"].(float64); !ok || resultCode != 0 {
+		t.Errorf("Expected resultCode 0, got '%v'", response["resultCode"])
 	}
 }
 

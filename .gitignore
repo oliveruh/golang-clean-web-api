@@ -27,6 +27,8 @@ __debug_bin
 
 # Build output
 bin/
+main
+src/main
 
 # Old files
 *.old.*

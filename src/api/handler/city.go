@@ -92,7 +92,7 @@ func (h *CityHandler) GetById(c *gin.Context) {
 // @Accept json
 // @produces json
 // @Param Request body filter.PaginationInputWithFilter true "Request"
-// @Success 200 {object} helper.BaseHttpResponse{result=filter.PagedList[dto.CityResponse]} "City response"
+// @Success 200 {object} helper.BaseHttpResponse "City response"
 // @Failure 400 {object} helper.BaseHttpResponse "Bad request"
 // @Router /v1/cities/get-by-filter [post]
 // @Security AuthBearer
