@@ -3,11 +3,12 @@ package api
 import (
 	"fmt"
 
+	"golang-clean-web-api/api/middleware"
+	"golang-clean-web-api/api/router"
+	"golang-clean-web-api/config"
+	"golang-clean-web-api/pkg/logging"
+
 	"github.com/gin-gonic/gin"
-	"github.com/naeemaei/golang-clean-web-api/api/middleware"
-	"github.com/naeemaei/golang-clean-web-api/api/router"
-	"github.com/naeemaei/golang-clean-web-api/config"
-	"github.com/naeemaei/golang-clean-web-api/pkg/logging"
 )
 
 var logger = logging.NewLogger(config.GetConfig())

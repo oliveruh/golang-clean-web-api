@@ -9,7 +9,7 @@ import (
 	"strings"
 	"unicode"
 
-	"github.com/naeemaei/golang-clean-web-api/config"
+	"golang-clean-web-api/config"
 )
 
 var (
@@ -108,7 +108,7 @@ func GeneratePassword() string {
 		password.WriteString(string(allCharSet[random]))
 	}
 	inRune := []rune(password.String())
-	
+
 	// Secure shuffle
 	for i := len(inRune) - 1; i > 0; i-- {
 		j := secureRandomInt(i + 1)

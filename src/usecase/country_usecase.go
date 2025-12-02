@@ -3,11 +3,11 @@ package usecase
 import (
 	"context"
 
-	"github.com/naeemaei/golang-clean-web-api/config"
-	"github.com/naeemaei/golang-clean-web-api/domain/filter"
-	model "github.com/naeemaei/golang-clean-web-api/domain/model"
-	"github.com/naeemaei/golang-clean-web-api/domain/repository"
-	"github.com/naeemaei/golang-clean-web-api/usecase/dto"
+	"golang-clean-web-api/config"
+	"golang-clean-web-api/domain/filter"
+	model "golang-clean-web-api/domain/model"
+	"golang-clean-web-api/domain/repository"
+	"golang-clean-web-api/usecase/dto"
 )
 
 type CountryUsecase struct {

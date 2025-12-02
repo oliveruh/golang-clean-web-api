@@ -56,6 +56,7 @@ curl "http://localhost:8080/api/v1/hello?name=Alice"
 ```
 
 Expected responses:
+
 ```json
 {"message":"Hello, World!"}
 {"message":"Hello, Alice!"}
@@ -89,21 +90,21 @@ In `src/api/handler_simple.go`:
 ```go
 func CreateUser(c *gin.Context) {
     var req CreateUserRequest
-    
+
     if err := c.ShouldBindJSON(&req); err != nil {
         c.JSON(http.StatusBadRequest, gin.H{
             "error": err.Error(),
         })
         return
     }
-    
+
     // In a real app, you would save to database here
     response := CreateUserResponse{
         ID:    "user-123",
         Name:  req.Name,
         Email: req.Email,
     }
-    
+
     c.JSON(http.StatusCreated, response)
 }
 ```
@@ -151,7 +152,7 @@ Then import and use them in `api.go`:
 
 ```go
 import (
-    "github.com/naeemaei/golang-clean-web-api/api/handlers"
+    "github.com/oliveruh/golang-clean-web-api/api/handlers"
 )
 
 func RegisterRoutes(r *gin.Engine) {
@@ -159,7 +160,7 @@ func RegisterRoutes(r *gin.Engine) {
     v1 := api.Group("/v1")
     {
         v1.GET("/health", handlers.Health)
-        
+
         // User routes
         users := v1.Group("/users")
         {
@@ -208,11 +209,11 @@ func TestYourEndpoint(t *testing.T) {
     gin.SetMode(gin.TestMode)
     r := gin.New()
     RegisterRoutes(r)
-    
+
     req, _ := http.NewRequest("GET", "/api/v1/your-endpoint", nil)
     w := httptest.NewRecorder()
     r.ServeHTTP(w, req)
-    
+
     if w.Code != http.StatusOK {
         t.Errorf("Expected 200, got %d", w.Code)
     }

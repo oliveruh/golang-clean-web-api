@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"golang-clean-web-api/config"
 
 	"github.com/gin-gonic/gin"
 )
@@ -13,12 +14,15 @@ func TestHealthEndpoint(t *testing.T) {
 	// Set Gin to test mode
 	gin.SetMode(gin.TestMode)
 
+	// Load environment configuration
+	cfg := config.GetConfig()
+
 	// Create a test router
 	r := gin.New()
 	r.Use(gin.Recovery())
-	
+
 	// Register routes
-	RegisterRoutes(r)
+	RegisterRoutes(r, cfg)
 
 	// Create a test request
 	req, err := http.NewRequest("GET", "/api/v1/health", nil)
@@ -58,12 +62,12 @@ func TestCORSMiddleware(t *testing.T) {
 
 	r := gin.New()
 	r.Use(gin.Recovery())
-	
+
 	// Create test group
 	testHandler := func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"test": "ok"})
 	}
-	
+
 	api := r.Group("/test")
 	api.GET("/cors", testHandler)
 

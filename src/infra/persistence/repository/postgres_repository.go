@@ -6,14 +6,15 @@ import (
 	"reflect"
 	"time"
 
-	"github.com/naeemaei/golang-clean-web-api/common"
-	"github.com/naeemaei/golang-clean-web-api/config"
-	"github.com/naeemaei/golang-clean-web-api/constant"
-	filter "github.com/naeemaei/golang-clean-web-api/domain/filter"
-	database "github.com/naeemaei/golang-clean-web-api/infra/persistence/database"
-	"github.com/naeemaei/golang-clean-web-api/pkg/logging"
-	"github.com/naeemaei/golang-clean-web-api/pkg/metrics"
-	"github.com/naeemaei/golang-clean-web-api/pkg/service_errors"
+	"golang-clean-web-api/common"
+	"golang-clean-web-api/config"
+	"golang-clean-web-api/constant"
+	filter "golang-clean-web-api/domain/filter"
+	database "golang-clean-web-api/infra/persistence/database"
+	"golang-clean-web-api/pkg/logging"
+	"golang-clean-web-api/pkg/metrics"
+	"golang-clean-web-api/pkg/service_errors"
+
 	"gorm.io/gorm"
 )
 
@@ -89,7 +90,7 @@ func (r BaseRepository[TEntity]) Delete(ctx context.Context, id int) error {
 	deleteMap := map[string]interface{}{
 		"deleted_at": sql.NullTime{Valid: true, Time: time.Now().UTC()},
 	}
-	
+
 	if userId := ctx.Value(constant.UserIdKey); userId != nil {
 		if userIdFloat, ok := userId.(float64); ok {
 			deleteMap["deleted_by"] = &sql.NullInt64{Int64: int64(userIdFloat), Valid: true}

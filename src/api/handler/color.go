@@ -1,13 +1,14 @@
 package handler
 
 import (
+	"golang-clean-web-api/api/dto"
+	_ "golang-clean-web-api/api/helper"
+	"golang-clean-web-api/config"
+	"golang-clean-web-api/dependency"
+	_ "golang-clean-web-api/domain/filter"
+	"golang-clean-web-api/usecase"
+
 	"github.com/gin-gonic/gin"
-	"github.com/naeemaei/golang-clean-web-api/api/dto"
-	_ "github.com/naeemaei/golang-clean-web-api/api/helper"
-	"github.com/naeemaei/golang-clean-web-api/config"
-	"github.com/naeemaei/golang-clean-web-api/dependency"
-	_ "github.com/naeemaei/golang-clean-web-api/domain/filter"
-	"github.com/naeemaei/golang-clean-web-api/usecase"
 )
 
 type ColorHandler struct {

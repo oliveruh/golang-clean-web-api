@@ -1,10 +1,11 @@
 package migration
 
 import (
-	"github.com/naeemaei/golang-clean-web-api/config"
-	models "github.com/naeemaei/golang-clean-web-api/domain/model"
-	database "github.com/naeemaei/golang-clean-web-api/infra/persistence/database"
-	"github.com/naeemaei/golang-clean-web-api/pkg/logging"
+	"golang-clean-web-api/config"
+	models "golang-clean-web-api/domain/model"
+	database "golang-clean-web-api/infra/persistence/database"
+	"golang-clean-web-api/pkg/logging"
+
 	"gorm.io/gorm"
 )
 
@@ -42,8 +43,6 @@ func addNewTable(database *gorm.DB, model interface{}, tables []interface{}) []i
 	}
 	return tables
 }
-
-
 
 func createCountry(database *gorm.DB) {
 	count := 0
@@ -113,8 +112,6 @@ func createCountry(database *gorm.DB) {
 		}})
 	}
 }
-
-
 
 func createColor(database *gorm.DB) {
 	count := 0

@@ -1,4 +1,4 @@
-module github.com/naeemaei/golang-clean-web-api
+module golang-clean-web-api
 
 go 1.23.0
 

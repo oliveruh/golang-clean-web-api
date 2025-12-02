@@ -1,9 +1,10 @@
 package router
 
 import (
+	"golang-clean-web-api/api/handler"
+	"golang-clean-web-api/config"
+
 	"github.com/gin-gonic/gin"
-	"github.com/naeemaei/golang-clean-web-api/api/handler"
-	"github.com/naeemaei/golang-clean-web-api/config"
 )
 
 const GetByFilterExp string = "/get-by-filter"
@@ -28,8 +29,6 @@ func City(r *gin.RouterGroup, cfg *config.Config) {
 	r.POST(GetByFilterExp, h.GetByFilter)
 }
 
-
-
 func Color(r *gin.RouterGroup, cfg *config.Config) {
 	h := handler.NewColorHandler(cfg)
 
@@ -39,5 +38,3 @@ func Color(r *gin.RouterGroup, cfg *config.Config) {
 	r.GET("/:id", h.GetById)
 	r.POST(GetByFilterExp, h.GetByFilter)
 }
-
-

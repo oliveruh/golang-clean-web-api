@@ -1,12 +1,12 @@
 package main
 
 import (
-	"github.com/naeemaei/golang-clean-web-api/api"
-	"github.com/naeemaei/golang-clean-web-api/config"
-	"github.com/naeemaei/golang-clean-web-api/infra/cache"
-	database "github.com/naeemaei/golang-clean-web-api/infra/persistence/database"
-	"github.com/naeemaei/golang-clean-web-api/infra/persistence/migration"
-	"github.com/naeemaei/golang-clean-web-api/pkg/logging"
+	"golang-clean-web-api/api"
+	"golang-clean-web-api/config"
+	"golang-clean-web-api/infra/cache"
+	database "golang-clean-web-api/infra/persistence/database"
+	"golang-clean-web-api/infra/persistence/migration"
+	"golang-clean-web-api/pkg/logging"
 )
 
 func main() {
