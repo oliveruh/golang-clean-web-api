@@ -24,3 +24,9 @@ go.work
 *.log.gz
 __debug_bin
 */cmd/uploads
+
+# Build output
+bin/
+
+# Old files
+*.old.*

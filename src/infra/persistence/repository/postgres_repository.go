@@ -55,7 +55,11 @@ func (r BaseRepository[TEntity]) Update(ctx context.Context, id int, entity map[
 	for k, v := range entity {
 		snakeMap[common.ToSnakeCase(k)] = v
 	}
-	snakeMap["modified_by"] = &sql.NullInt64{Int64: int64(ctx.Value(constant.UserIdKey).(float64)), Valid: true}
+	if userId := ctx.Value(constant.UserIdKey); userId != nil {
+		if userIdFloat, ok := userId.(float64); ok {
+			snakeMap["modified_by"] = &sql.NullInt64{Int64: int64(userIdFloat), Valid: true}
+		}
+	}
 	snakeMap["modified_at"] = sql.NullTime{Valid: true, Time: time.Now().UTC()}
 	model := new(TEntity)
 	tx := r.database.WithContext(ctx).Begin()
@@ -78,13 +82,18 @@ func (r BaseRepository[TEntity]) Delete(ctx context.Context, id int) error {
 
 	model := new(TEntity)
 
-	deleteMap := map[string]interface{}{
-		"deleted_by": &sql.NullInt64{Int64: int64(ctx.Value(constant.UserIdKey).(float64)), Valid: true},
-		"deleted_at": sql.NullTime{Valid: true, Time: time.Now().UTC()},
-	}
-
 	if ctx.Value(constant.UserIdKey) == nil {
 		return &service_errors.ServiceError{EndUserMessage: service_errors.PermissionDenied}
+	}
+
+	deleteMap := map[string]interface{}{
+		"deleted_at": sql.NullTime{Valid: true, Time: time.Now().UTC()},
+	}
+	
+	if userId := ctx.Value(constant.UserIdKey); userId != nil {
+		if userIdFloat, ok := userId.(float64); ok {
+			deleteMap["deleted_by"] = &sql.NullInt64{Int64: int64(userIdFloat), Valid: true}
+		}
 	}
 	if cnt := tx.
 		Model(model).

@@ -1,7 +1,5 @@
 package model
 
-import "time"
-
 type Country struct {
 	BaseModel
 	Name      string `gorm:"size:15;type:string;not null;"`
@@ -16,20 +14,17 @@ type City struct {
 	Country   Country `gorm:"foreignKey:CountryId;constraint:OnUpdate:NO ACTION;OnDelete:NO ACTION"`
 }
 
-type PersianYear struct {
+type Company struct {
 	BaseModel
-	PersianTitle  string    `gorm:"size:10;type:string;not null;unique"`
-	Year          int       `gorm:"type:int;uniqueIndex;not null"`
-	StartAt       time.Time `gorm:"type:TIMESTAMP with time zone;not null;unique"`
-	EndAt         time.Time `gorm:"type:TIMESTAMP with time zone;not null;unique"`
-	CarModelYears []CarModelYear
+	Name      string `gorm:"size:20;type:string;not null,unique"`
+	CountryId int
+	Country   Country `gorm:"foreignKey:CountryId;constraint:OnUpdate:NO ACTION;OnDelete:NO ACTION"`
 }
 
 type Color struct {
 	BaseModel
-	Name           string `gorm:"size:15;type:string;not null,unique"`
-	HexCode        string `gorm:"size:7;type:string;not null,unique"`
-	CarModelColors []CarModelColor
+	Name    string `gorm:"size:15;type:string;not null,unique"`
+	HexCode string `gorm:"size:7;type:string;not null,unique"`
 }
 
 type File struct {

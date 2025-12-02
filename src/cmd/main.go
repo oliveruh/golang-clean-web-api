@@ -9,11 +9,7 @@ import (
 	"github.com/naeemaei/golang-clean-web-api/pkg/logging"
 )
 
-// @securityDefinitions.apikey AuthBearer
-// @in header
-// @name Authorization
 func main() {
-
 	cfg := config.GetConfig()
 	logger := logging.NewLogger(cfg)
 

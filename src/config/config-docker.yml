@@ -1,30 +1,28 @@
 server:
-  internalPort: 5000
-  externalPort: 0
-  runMode: release
-  domain: localhost
+  port: "8080"
+  runMode: "release"
 logger:
-  filePath: /app/logs/
-  encoding: json
-  level: debug
-  logger: zap
+  filePath: "/app/logs/"
+  encoding: "json"
+  level: "info"
+  logger: "zap"
 cors:
   allowOrigins: "*"
 postgres:
-  host: postgres_container
-  port: 5432
-  user: postgres
-  password: admin
-  dbName: car_sale_db
-  sslMode: disable
+  host: "postgres"
+  port: "5432"
+  user: "postgres"
+  password: "admin"
+  dbName: "web_api_db"
+  sslMode: "disable"
   maxIdleConns: 15
   maxOpenConns: 100
   connMaxLifetime: 5
 redis:
-  host: redis_container
-  port: 6379
-  password: password
-  db: 0
+  host: "redis"
+  port: "6379"
+  password: "password"
+  db: "0"
   dialTimeout: 5
   readTimeout: 5
   writeTimeout: 5
@@ -42,8 +40,3 @@ otp:
   expireTime: 120
   digits: 6
   limiter: 100
-jwt:
-  secret: "mySecretKey"
-  refreshSecret: "mySecretKey"
-  accessTokenExpireDuration: 60
-  refreshTokenExpireDuration: 60

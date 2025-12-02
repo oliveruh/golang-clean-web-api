@@ -17,14 +17,11 @@ type Config struct {
 	Cors     CorsConfig
 	Logger   LoggerConfig
 	Otp      OtpConfig
-	JWT      JWTConfig
 }
 
 type ServerConfig struct {
-	InternalPort string
-	ExternalPort string
-	RunMode      string
-	Domain       string
+	Port    string
+	RunMode string
 }
 
 type LoggerConfig struct {
@@ -68,21 +65,14 @@ type PasswordConfig struct {
 	IncludeLowercase bool
 }
 
-type CorsConfig struct {
-	AllowOrigins string
-}
-
 type OtpConfig struct {
 	ExpireTime time.Duration
 	Digits     int
 	Limiter    time.Duration
 }
 
-type JWTConfig struct {
-	AccessTokenExpireDuration  time.Duration
-	RefreshTokenExpireDuration time.Duration
-	Secret                     string
-	RefreshSecret              string
+type CorsConfig struct {
+	AllowOrigins string
 }
 
 func GetConfig() *Config {
@@ -96,14 +86,11 @@ func GetConfig() *Config {
 	if err != nil {
 		log.Fatalf("Error in parse config %v", err)
 	}
-	
+
 	envPort := os.Getenv("PORT")
 	if envPort != "" {
-		cfg.Server.ExternalPort = envPort
-		log.Printf("Set external port from environment -> %s", cfg.Server.ExternalPort)
-	} else {
-		cfg.Server.ExternalPort = cfg.Server.InternalPort
-		log.Printf("Environment variable PORT not set; using internal port value -> %s", cfg.Server.ExternalPort)
+		cfg.Server.Port = envPort
+		log.Printf("Using port from environment: %s", cfg.Server.Port)
 	}
 
 	return cfg
@@ -123,6 +110,9 @@ func LoadConfig(filename string, fileType string) (*viper.Viper, error) {
 	v.SetConfigType(fileType)
 	v.SetConfigName(filename)
 	v.AddConfigPath(".")
+	v.AddConfigPath("./config")
+	v.AddConfigPath("../config")
+	v.AddConfigPath("../../config")
 	v.AutomaticEnv()
 
 	err := v.ReadInConfig()
@@ -138,10 +128,9 @@ func LoadConfig(filename string, fileType string) (*viper.Viper, error) {
 
 func getConfigPath(env string) string {
 	if env == "docker" {
-		return "/app/config/config-docker"
+		return "config-docker"
 	} else if env == "production" {
-		return "/config/config-production"
-	} else {
-		return "../config/config-development"
+		return "config-production"
 	}
+	return "config-development"
 }
