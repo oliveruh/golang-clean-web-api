@@ -4,18 +4,71 @@ import (
 	"errors"
 	"log"
 	"os"
+	"time"
 
 	"github.com/spf13/viper"
 )
 
 type Config struct {
-	Server ServerConfig
-	Cors   CorsConfig
+	Server   ServerConfig
+	Postgres PostgresConfig
+	Redis    RedisConfig
+	Password PasswordConfig
+	Cors     CorsConfig
+	Logger   LoggerConfig
+	Otp      OtpConfig
 }
 
 type ServerConfig struct {
 	Port    string
 	RunMode string
+}
+
+type LoggerConfig struct {
+	FilePath string
+	Encoding string
+	Level    string
+	Logger   string
+}
+
+type PostgresConfig struct {
+	Host            string
+	Port            string
+	User            string
+	Password        string
+	DbName          string
+	SSLMode         string
+	MaxIdleConns    int
+	MaxOpenConns    int
+	ConnMaxLifetime time.Duration
+}
+
+type RedisConfig struct {
+	Host               string
+	Port               string
+	Password           string
+	Db                 string
+	DialTimeout        time.Duration
+	ReadTimeout        time.Duration
+	WriteTimeout       time.Duration
+	IdleCheckFrequency time.Duration
+	PoolSize           int
+	PoolTimeout        time.Duration
+}
+
+type PasswordConfig struct {
+	IncludeChars     bool
+	IncludeDigits    bool
+	MinLength        int
+	MaxLength        int
+	IncludeUppercase bool
+	IncludeLowercase bool
+}
+
+type OtpConfig struct {
+	ExpireTime time.Duration
+	Digits     int
+	Limiter    time.Duration
 }
 
 type CorsConfig struct {
@@ -74,7 +127,9 @@ func LoadConfig(filename string, fileType string) (*viper.Viper, error) {
 }
 
 func getConfigPath(env string) string {
-	if env == "production" {
+	if env == "docker" {
+		return "config-docker"
+	} else if env == "production" {
 		return "config-production"
 	}
 	return "config-development"
