@@ -30,3 +30,4 @@ bin/
 
 # Old files
 *.old.*
+.vscode
