@@ -1,12 +1,12 @@
 package common
 
 import (
+	"crypto/rand"
 	"math"
-	"math/rand"
+	"math/big"
 	"regexp"
 	"strconv"
 	"strings"
-	"time"
 	"unicode"
 
 	"github.com/naeemaei/golang-clean-web-api/config"
@@ -48,6 +48,15 @@ func CheckPassword(password string) bool {
 	return true
 }
 
+// secureRandomInt generates a cryptographically secure random integer in [0, max)
+func secureRandomInt(max int) int {
+	nBig, err := rand.Int(rand.Reader, big.NewInt(int64(max)))
+	if err != nil {
+		panic(err)
+	}
+	return int(nBig.Int64())
+}
+
 func GeneratePassword() string {
 	var password strings.Builder
 
@@ -71,47 +80,49 @@ func GeneratePassword() string {
 
 	//Set special character
 	for i := 0; i < minSpecialChar; i++ {
-		random := rand.Intn(len(specialCharSet))
+		random := secureRandomInt(len(specialCharSet))
 		password.WriteString(string(specialCharSet[random]))
 	}
 
 	//Set numeric
 	for i := 0; i < minNum; i++ {
-		random := rand.Intn(len(numberSet))
+		random := secureRandomInt(len(numberSet))
 		password.WriteString(string(numberSet[random]))
 	}
 
 	//Set uppercase
 	for i := 0; i < minUpperCase; i++ {
-		random := rand.Intn(len(upperCharSet))
+		random := secureRandomInt(len(upperCharSet))
 		password.WriteString(string(upperCharSet[random]))
 	}
 
 	//Set lowercase
 	for i := 0; i < minLowerCase; i++ {
-		random := rand.Intn(len(lowerCharSet))
+		random := secureRandomInt(len(lowerCharSet))
 		password.WriteString(string(lowerCharSet[random]))
 	}
 
 	remainingLength := passwordLength - minSpecialChar - minNum - minUpperCase
 	for i := 0; i < remainingLength; i++ {
-		random := rand.Intn(len(allCharSet))
+		random := secureRandomInt(len(allCharSet))
 		password.WriteString(string(allCharSet[random]))
 	}
 	inRune := []rune(password.String())
-	rand.Shuffle(len(inRune), func(i, j int) {
+	
+	// Secure shuffle
+	for i := len(inRune) - 1; i > 0; i-- {
+		j := secureRandomInt(i + 1)
 		inRune[i], inRune[j] = inRune[j], inRune[i]
-	})
+	}
 	return string(inRune)
 }
 
 func GenerateOtp() string {
 	cfg := config.GetConfig()
-	rand.Seed(time.Now().UnixNano())
 	min := int(math.Pow(10, float64(cfg.Otp.Digits-1)))   // 10^d-1 100000
 	max := int(math.Pow(10, float64(cfg.Otp.Digits)) - 1) // 999999 = 1000000 - 1 (10^d) -1
 
-	var num = rand.Intn(max-min) + min
+	var num = secureRandomInt(max-min+1) + min
 	return strconv.Itoa(num)
 }
 
