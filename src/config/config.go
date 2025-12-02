@@ -10,13 +10,15 @@ import (
 )
 
 type Config struct {
-	Server   ServerConfig
-	Postgres PostgresConfig
-	Redis    RedisConfig
-	Password PasswordConfig
-	Cors     CorsConfig
-	Logger   LoggerConfig
-	Otp      OtpConfig
+	Server      ServerConfig
+	Postgres    PostgresConfig
+	Redis       RedisConfig
+	Password    PasswordConfig
+	Cors        CorsConfig
+	Logger      LoggerConfig
+	Otp         OtpConfig
+	Jwt         JwtConfig
+	RateLimiter RateLimiterConfig
 }
 
 type ServerConfig struct {
@@ -73,6 +75,17 @@ type OtpConfig struct {
 
 type CorsConfig struct {
 	AllowOrigins string
+}
+
+type JwtConfig struct {
+	Secret           string
+	AccessExpireTime time.Duration
+	RefreshExpireTime time.Duration
+}
+
+type RateLimiterConfig struct {
+	Enabled        bool
+	RequestsPerMin int
 }
 
 func GetConfig() *Config {

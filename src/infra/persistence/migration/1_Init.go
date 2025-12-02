@@ -24,6 +24,9 @@ func Up1() {
 func createTables(database *gorm.DB) {
 	tables := []interface{}{}
 
+	// Authentication
+	tables = addNewTable(database, models.User{}, tables)
+
 	// Basic entities
 	tables = addNewTable(database, models.Country{}, tables)
 	tables = addNewTable(database, models.City{}, tables)

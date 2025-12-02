@@ -88,7 +88,7 @@ func (h *CountryHandler) GetById(c *gin.Context) {
 // @Accept json
 // @produces json
 // @Param Request body filter.PaginationInputWithFilter true "Request"
-// @Success 200 {object} helper.BaseHttpResponse{result=filter.PagedList[dto.CountryResponse]} "Country response"
+// @Success 200 {object} helper.BaseHttpResponse "Country response"
 // @Failure 400 {object} helper.BaseHttpResponse "Bad request"
 // @Router /v1/countries/get-by-filter [post]
 // @Security AuthBearer
