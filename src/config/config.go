@@ -131,6 +131,8 @@ func getConfigPath(env string) string {
 		return "config-docker"
 	} else if env == "production" {
 		return "config-production"
+	} else if env == "test" {
+		return "config-test"
 	}
 	return "config-development"
 }

@@ -5,7 +5,8 @@ import (
 	"log"
 	"time"
 
-	"github.com/naeemaei/golang-clean-web-api/config"
+	"golang-clean-web-api/config"
+
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -14,9 +15,11 @@ var dbClient *gorm.DB
 
 func InitDb(cfg *config.Config) error {
 	var err error
-	cnn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s TimeZone=Asia/Tehran",
+	// print config
+	fmt.Printf("Postgres Config: %+v\n", cfg.Postgres)
+	cnn := fmt.Sprintf("host=%s port=%s user=%s password=%s sslmode=%s TimeZone=America/Recife",
 		cfg.Postgres.Host, cfg.Postgres.Port, cfg.Postgres.User, cfg.Postgres.Password,
-		cfg.Postgres.DbName, cfg.Postgres.SSLMode)
+		cfg.Postgres.SSLMode)
 
 	dbClient, err = gorm.Open(postgres.Open(cnn), &gorm.Config{})
 	if err != nil {
