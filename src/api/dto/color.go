@@ -33,7 +33,7 @@ func ToCreateColor(from CreateColorRequest) dto.CreateColor {
 	}
 }
 
-func ToUpdateColor(from CreateColorRequest) dto.UpdateColor {
+func ToUpdateColor(from UpdateColorRequest) dto.UpdateColor {
 	return dto.UpdateColor{
 		Name:    from.Name,
 		HexCode: from.HexCode,
