@@ -15,6 +15,9 @@ A clean architecture web API template built with Go, Gin, PostgreSQL, and Redis.
 - ✅ Health check endpoint
 - ✅ Sample CRUD endpoints (Countries, Cities, Colors)
 - ✅ Database migrations
+- ✅ **JWT Authentication & Authorization**
+- ✅ **API Documentation with Swagger/OpenAPI**
+- ✅ **Rate Limiting middleware**
 - ✅ Ready for adding custom endpoints
 
 ## Project Structure
@@ -23,9 +26,9 @@ A clean architecture web API template built with Go, Gin, PostgreSQL, and Redis.
 src/
 ├── api/
 │   ├── dto/              # Data Transfer Objects
-│   ├── handler/          # HTTP handlers
+│   ├── handler/          # HTTP handlers (including auth)
 │   ├── helper/           # Helper functions
-│   ├── middleware/       # Middleware (CORS, etc.)
+│   ├── middleware/       # Middleware (CORS, Auth, Rate Limiting)
 │   ├── router/           # Route definitions
 │   └── validation/       # Custom validators
 ├── cmd/
@@ -41,7 +44,9 @@ src/
 ├── infra/
 │   ├── cache/           # Redis cache implementation
 │   └── persistence/     # Database & repository implementation
+├── docs/                # Swagger documentation (auto-generated)
 ├── pkg/
+│   ├── jwt/             # JWT token service
 │   ├── logging/         # Logging utilities
 │   ├── metrics/         # Metrics (Prometheus)
 │   └── service_errors/  # Error handling
@@ -56,6 +61,9 @@ src/
 - [Redis](https://redis.io/) - Caching
 - [Viper](https://github.com/spf13/viper) - Configuration management
 - [Zap](https://github.com/uber-go/zap) - Structured logging
+- [JWT](https://github.com/golang-jwt/jwt) - JSON Web Token authentication
+- [Swagger](https://github.com/swaggo/swag) - API documentation
+- [Tollbooth](https://github.com/didip/tollbooth) - Rate limiting
 
 ## Quick Start
 
@@ -126,6 +134,13 @@ redis:
   host: "localhost"
   port: "6379"
   password: "password"
+jwt:
+  secret: "your-256-bit-secret-key"
+  accessExpireTime: 60  # minutes
+  refreshExpireTime: 10080  # minutes (7 days)
+rateLimiter:
+  enabled: true
+  requestsPerMin: 100
 ```
 
 ### Environment Variables
@@ -133,38 +148,138 @@ redis:
 - `APP_ENV` - Set to "docker" or "production" to use different configs
 - `PORT` - Override the configured port
 
+## API Documentation
+
+Interactive API documentation is available via Swagger UI when running in debug/development mode:
+
+```
+http://localhost:8080/swagger/index.html
+```
+
+The Swagger documentation provides:
+- Complete API endpoint reference
+- Request/response schemas
+- Try-it-out functionality for testing endpoints
+- Authentication support for protected endpoints
+
+## Authentication
+
+The API uses JWT (JSON Web Token) for authentication. Protected endpoints require a valid JWT token in the Authorization header.
+
+### Register a New User
+```bash
+curl -X POST http://localhost:8080/api/v1/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "testuser",
+    "password": "password123",
+    "email": "testuser@example.com"
+  }'
+```
+
+### Login
+```bash
+curl -X POST http://localhost:8080/api/v1/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "testuser",
+    "password": "password123"
+  }'
+```
+
+Response:
+```json
+{
+  "result": {
+    "access_token": "eyJhbGc...",
+    "refresh_token": "eyJhbGc..."
+  },
+  "success": true,
+  "resultCode": 0
+}
+```
+
+### Refresh Token
+```bash
+curl -X POST http://localhost:8080/api/v1/auth/refresh \
+  -H "Content-Type: application/json" \
+  -d '{
+    "refresh_token": "eyJhbGc..."
+  }'
+```
+
+### Using Protected Endpoints
+
+All CRUD endpoints (Countries, Cities, Colors) require authentication. Include the access token in the Authorization header:
+
+```bash
+# Get all countries with authentication
+curl -X POST http://localhost:8080/api/v1/countries/get-by-filter \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer eyJhbGc..." \
+  -d '{"pageNumber": 1, "pageSize": 10}'
+
+# Create country with authentication
+curl -X POST http://localhost:8080/api/v1/countries \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer eyJhbGc..." \
+  -d '{"name": "Brazil"}'
+```
+
+## Rate Limiting
+
+Rate limiting is enabled by default to protect the API from abuse. The default configuration allows:
+- 100 requests per minute in development
+- 60 requests per minute in production
+
+Rate limiting can be configured in the config files:
+```yaml
+rateLimiter:
+  enabled: true
+  requestsPerMin: 100
+```
+
+When rate limit is exceeded, the API returns a 429 (Too Many Requests) status code.
+
 ## API Endpoints
 
-### Health Check
+### Health Check (Public)
 ```bash
 curl http://localhost:8080/api/v1/health
 ```
 
-### Countries
+### Countries (Protected - requires authentication)
 ```bash
+# Note: All examples below require "Authorization: Bearer <token>" header
+
 # Get all countries with pagination
 curl -X POST http://localhost:8080/api/v1/countries/get-by-filter \
   -H "Content-Type: application/json" \
+  -H "Authorization: Bearer <token>" \
   -d '{"pageNumber": 1, "pageSize": 10}'
 
 # Get country by ID
-curl http://localhost:8080/api/v1/countries/1
+curl http://localhost:8080/api/v1/countries/1 \
+  -H "Authorization: Bearer <token>"
 
 # Create country
 curl -X POST http://localhost:8080/api/v1/countries \
   -H "Content-Type: application/json" \
+  -H "Authorization: Bearer <token>" \
   -d '{"name": "Brazil"}'
 
 # Update country
 curl -X PUT http://localhost:8080/api/v1/countries/1 \
   -H "Content-Type: application/json" \
+  -H "Authorization: Bearer <token>" \
   -d '{"name": "Updated Name"}'
 
 # Delete country
-curl -X DELETE http://localhost:8080/api/v1/countries/1
+curl -X DELETE http://localhost:8080/api/v1/countries/1 \
+  -H "Authorization: Bearer <token>"
 ```
 
-Similar endpoints are available for:
+Similar protected endpoints are available for:
 - `/api/v1/cities` - City management
 - `/api/v1/colors` - Color management
 
@@ -223,17 +338,35 @@ go fmt ./...
 go vet ./...
 ```
 
+### Regenerating Swagger Documentation
+
+After making changes to API endpoints or handlers, regenerate the Swagger documentation:
+
+```bash
+cd src
+swag init -g cmd/main.go -o ./docs
+```
+
+## Security Considerations
+
+1. **JWT Secret**: Change the default JWT secret in production environments. Use a strong, random 256-bit key.
+2. **HTTPS**: Always use HTTPS in production to protect JWT tokens in transit.
+3. **Password Security**: Passwords are hashed using bcrypt before storage.
+4. **Rate Limiting**: Adjust rate limits based on your application's needs and infrastructure.
+5. **CORS**: Configure CORS settings appropriately for your frontend domains.
+
 ## Next Steps
 
-This template provides a solid foundation. You can extend it with:
+This template now includes authentication, API documentation, and rate limiting. You can further extend it with:
 
-- Authentication & authorization (JWT)
-- API documentation (Swagger)
-- More comprehensive logging
-- Rate limiting
-- Request validation
+- Role-based access control (RBAC)
+- More comprehensive logging and monitoring
+- Advanced rate limiting strategies (per-user, per-endpoint)
 - Unit and integration tests
 - CI/CD pipelines
+- Database backup and recovery strategies
+- Distributed tracing
+- API versioning strategies
 
 ## License
 
