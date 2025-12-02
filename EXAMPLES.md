@@ -178,3 +178,54 @@ func RegisterRoutes(r *gin.Engine) {
 - Add request validation
 - Add error handling middleware
 - Add logging
+
+## Testing
+
+The template includes a basic test example in `src/api/api_test.go`.
+
+### Running Tests
+
+```bash
+cd src
+go test ./... -v
+```
+
+### Adding Tests for Your Endpoints
+
+Create a test file alongside your handler file (e.g., `user_handler_test.go` for `user_handler.go`):
+
+```go
+package api
+
+import (
+    "net/http"
+    "net/http/httptest"
+    "testing"
+    "github.com/gin-gonic/gin"
+)
+
+func TestYourEndpoint(t *testing.T) {
+    gin.SetMode(gin.TestMode)
+    r := gin.New()
+    RegisterRoutes(r)
+    
+    req, _ := http.NewRequest("GET", "/api/v1/your-endpoint", nil)
+    w := httptest.NewRecorder()
+    r.ServeHTTP(w, req)
+    
+    if w.Code != http.StatusOK {
+        t.Errorf("Expected 200, got %d", w.Code)
+    }
+}
+```
+
+### Test Coverage
+
+```bash
+# Run tests with coverage
+go test ./... -cover
+
+# Generate HTML coverage report
+go test ./... -coverprofile=coverage.out
+go tool cover -html=coverage.out
+```
