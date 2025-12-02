@@ -34,10 +34,10 @@ func InitServer(cfg *config.Config) {
 
 func RegisterRoutes(r *gin.Engine, cfg *config.Config) {
 	api := r.Group("/api")
-	
+
 	// Swagger documentation
 	router.Swagger(r, cfg)
-	
+
 	v1 := api.Group("/v1")
 	{
 		// Health check - public endpoint

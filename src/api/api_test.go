@@ -2,10 +2,10 @@ package api
 
 import (
 	"encoding/json"
+	"golang-clean-web-api/config"
 	"net/http"
 	"net/http/httptest"
 	"testing"
-	"golang-clean-web-api/config"
 
 	"github.com/gin-gonic/gin"
 )

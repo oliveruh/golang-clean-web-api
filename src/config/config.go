@@ -78,8 +78,8 @@ type CorsConfig struct {
 }
 
 type JwtConfig struct {
-	Secret           string
-	AccessExpireTime time.Duration
+	Secret            string
+	AccessExpireTime  time.Duration
 	RefreshExpireTime time.Duration
 }
 

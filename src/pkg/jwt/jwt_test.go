@@ -2,7 +2,6 @@ package jwt
 
 import (
 	"testing"
-	"time"
 
 	"golang-clean-web-api/config"
 )
@@ -73,31 +72,27 @@ func TestTokenService_GenerateAndValidateToken(t *testing.T) {
 		}
 	})
 
-	// Test expired token
-	t.Run("Validate Expired Token", func(t *testing.T) {
-		// Create a config with very short expiration
-		shortCfg := &config.Config{
-			Jwt: config.JwtConfig{
-				Secret:            "test-secret-key-for-jwt-testing-purposes",
-				AccessExpireTime:  -1, // Negative value to create expired token
-				RefreshExpireTime: 10080,
-			},
-		}
-		shortService := NewTokenService(shortCfg)
-
-		token, err := shortService.GenerateAccessToken(userID, username)
+	// Test token with wrong secret
+	t.Run("Validate Token With Wrong Secret", func(t *testing.T) {
+		// Generate token with one secret
+		token, err := service.GenerateAccessToken(userID, username)
 		if err != nil {
 			t.Fatalf("Failed to generate token: %v", err)
 		}
 
-		// Wait a moment to ensure the token is expired
-		time.Sleep(100 * time.Millisecond)
+		// Try to validate with different secret
+		wrongSecretCfg := &config.Config{
+			Jwt: config.JwtConfig{
+				Secret:            "different-secret-key",
+				AccessExpireTime:  60,
+				RefreshExpireTime: 10080,
+			},
+		}
+		wrongSecretService := NewTokenService(wrongSecretCfg)
 
-		_, err = service.ValidateToken(token)
-		// Should fail because token is expired (but might pass due to timing)
-		// This is a best-effort test
+		_, err = wrongSecretService.ValidateToken(token)
 		if err == nil {
-			t.Log("Note: Token validation succeeded despite negative expiration time")
+			t.Fatal("Expected error when validating token with wrong secret, got nil")
 		}
 	})
 }
